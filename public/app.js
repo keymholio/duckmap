@@ -296,9 +296,10 @@ function openModal() {
 }
 
 function closeModal() {
-  // Blur first so iOS starts dismissing the keyboard before we hide the modal
   if (document.activeElement) document.activeElement.blur();
   modal.classList.add('hidden');
+  modal.style.top = '';
+  modal.style.height = '';
   document.body.style.overflow = '';
   form.reset();
   photoInput.value = '';
@@ -308,11 +309,17 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
-  // visualViewport listener resets the translateY when keyboard fully dismisses
 }
 
 logBtn.addEventListener('click', openModal);
 fabLog.addEventListener('click', openModal);
+
+// Scroll focused inputs into view after keyboard finishes appearing
+form.addEventListener('focusin', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+    setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 350);
+  }
+});
 document.getElementById('modal-close').addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
@@ -391,12 +398,20 @@ form.addEventListener('submit', async e => {
 // ── iOS visual viewport compensation ──
 // When the keyboard appears, iOS shifts the visual viewport upward to reveal
 // the focused input, which pushes our header off the top of the screen.
-// Counter it by translating #app down by the same offset.
+// Fix: translate only the header (not #app) so position:fixed modal is unaffected,
+// and resize the modal to the visual viewport so inputs aren't hidden under the keyboard.
 if (window.visualViewport) {
-  const appEl = document.getElementById('app');
+  const headerEl = document.getElementById('mobile-controls');
   const onVP = () => {
-    const offset = window.visualViewport.offsetTop;
-    appEl.style.transform = offset ? `translateY(${offset}px)` : '';
+    const vp = window.visualViewport;
+    const offset = vp.offsetTop;
+    // Keep header at visual viewport top
+    headerEl.style.transform = offset ? `translateY(${offset}px)` : '';
+    // Size modal to exactly the visible area so keyboard doesn't cover form inputs
+    if (!modal.classList.contains('hidden')) {
+      modal.style.top = offset + 'px';
+      modal.style.height = vp.height + 'px';
+    }
   };
   window.visualViewport.addEventListener('resize', onVP);
   window.visualViewport.addEventListener('scroll', onVP);
