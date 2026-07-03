@@ -46,6 +46,7 @@ const duckList = document.getElementById('duck-list');
 const geocodeStatus = document.getElementById('geocode-status');
 const submitBtn = document.getElementById('submit-btn');
 const logBtn = document.getElementById('log-btn');
+const headerEl = document.getElementById('mobile-controls');
 
 const emptyState = document.getElementById('empty-state');
 const duckCount = document.getElementById('duck-count');
@@ -309,11 +310,14 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
-  // After the keyboard animates away, reset any internal iOS scroll and re-measure the map.
+  // Clear header immediately — onVP fires during the keyboard-close animation and would
+  // otherwise re-apply the transform after this function exits.
+  resetHeader();
   setTimeout(() => {
+    resetHeader();
     window.scrollTo(0, 0);
     map.invalidateSize();
-  }, 400);
+  }, 500);
 }
 
 logBtn.addEventListener('click', openModal);
@@ -400,17 +404,37 @@ form.addEventListener('submit', async e => {
   }
 });
 
+// ── Header reset helper ──
+// z-index is never set in CSS — only applied here while keyboard is open so that
+// no permanent stacking context disrupts Leaflet touch-event routing.
+function resetHeader() {
+  headerEl.style.transform = '';
+  headerEl.style.zIndex = '';
+}
+
 // ── iOS visual viewport compensation ──
-// The sticky header handles its own positioning when iOS scrolls the page for
-// the keyboard. We only need to resize the modal so the form stays above the keyboard.
+// When the keyboard appears iOS shifts the visual viewport upward (offsetTop > 0),
+// pushing the header off-screen. Translate the header back down by that offset.
+// Key rule: once the modal is hidden, ALWAYS reset — this prevents the keyboard-
+// close animation from re-applying the transform after closeModal() already cleared it.
 if (window.visualViewport) {
   const onVP = () => {
     const vp = window.visualViewport;
-    if (!modal.classList.contains('hidden')) {
+    const modalOpen = !modal.classList.contains('hidden');
+    if (modalOpen) {
+      const offset = vp.height < window.innerHeight - 50 ? Math.round(vp.offsetTop) : 0;
+      if (offset > 0) {
+        headerEl.style.transform = `translateY(${offset}px)`;
+        headerEl.style.zIndex = '1001';
+      } else {
+        resetHeader();
+      }
       modal.style.top = vp.offsetTop + 'px';
       modal.style.height = vp.height + 'px';
+    } else {
+      resetHeader();
+      if (vp.height >= window.innerHeight - 10) map.invalidateSize();
     }
-    if (vp.height >= window.innerHeight - 10) map.invalidateSize();
   };
   window.visualViewport.addEventListener('resize', onVP);
   window.visualViewport.addEventListener('scroll', onVP);
