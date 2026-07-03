@@ -276,7 +276,6 @@ function openModal() {
 function closeModal() {
   modal.classList.add('hidden');
   document.body.style.overflow = '';
-  window.scrollTo(0, 0);
   form.reset();
   photoInput.value = '';
   photoPreview.src = '';
