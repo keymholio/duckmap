@@ -309,6 +309,14 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
+  // iOS doesn't reliably fire visualViewport events with offsetTop=0 when the keyboard
+  // dismisses against an overflow:hidden body. Force-reset the header after the
+  // keyboard animation finishes (~350ms) so it doesn't stay shifted over other content.
+  const headerEl = document.getElementById('mobile-controls');
+  setTimeout(() => {
+    headerEl.style.transform = '';
+    window.scrollTo(0, 0);
+  }, 400);
 }
 
 logBtn.addEventListener('click', openModal);
@@ -404,10 +412,10 @@ if (window.visualViewport) {
   const headerEl = document.getElementById('mobile-controls');
   const onVP = () => {
     const vp = window.visualViewport;
-    const offset = vp.offsetTop;
-    // Keep header at visual viewport top
+    // If viewport height is back to full window height, keyboard is fully gone — hard reset.
+    const keyboardGone = vp.height >= window.innerHeight - 10;
+    const offset = keyboardGone ? 0 : vp.offsetTop;
     headerEl.style.transform = offset ? `translateY(${offset}px)` : '';
-    // Size modal to exactly the visible area so keyboard doesn't cover form inputs
     if (!modal.classList.contains('hidden')) {
       modal.style.top = offset + 'px';
       modal.style.height = vp.height + 'px';
