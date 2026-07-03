@@ -53,6 +53,26 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
 .tagline { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
 
+#duck-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255,255,255,0.4);
+}
+
+.badge {
+  background: var(--duck-yellow);
+  color: var(--navy);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+}
+
 #duck-list {
   list-style: none;
   display: flex;

@@ -48,6 +48,7 @@ const submitBtn = document.getElementById('submit-btn');
 const logBtn = document.getElementById('log-btn');
 
 const emptyState = document.getElementById('empty-state');
+const duckCount = document.getElementById('duck-count');
 
 // Admin DOM refs
 const adminToggle = document.getElementById('admin-toggle');
@@ -131,6 +132,7 @@ function addDuck(duck, flyTo = false) {
   `, { maxWidth: 200 });
   clusterGroup.addLayer(marker);
   markers.set(duck.id, marker);
+  duckCount.textContent = markers.size;
 
   if (flyTo) clusterGroup.zoomToShowLayer(marker, () => marker.openPopup());
 }
@@ -141,6 +143,7 @@ function removeDuck(id) {
   const li = duckList.querySelector(`[data-duck-id="${id}"]`);
   if (li) li.remove();
   ducks = ducks.filter(d => d.id !== id);
+  duckCount.textContent = markers.size;
   if (markers.size === 0) emptyState.classList.remove('hidden');
 }
 
@@ -345,11 +348,15 @@ form.addEventListener('submit', async e => {
     if (!markers.has(duck.id)) {
       ducks.push(duck);
       addDuck(duck, false);
-      setTimeout(() => {
-        const m = markers.get(duck.id);
-        if (m) clusterGroup.zoomToShowLayer(m, () => m.openPopup());
-      }, 350);
     }
+    // Always fly to the new duck — SSE may have already added the marker
+    setTimeout(() => {
+      map.flyTo([duck.lat, duck.lng], 13, { animate: true, duration: 1.2 });
+    }, 350);
+    setTimeout(() => {
+      const m = markers.get(duck.id);
+      if (m) m.openPopup();
+    }, 1800);
   } catch (err) {
     geocodeStatus.textContent = 'Something went wrong. Please try again.';
     geocodeStatus.className = 'error';
