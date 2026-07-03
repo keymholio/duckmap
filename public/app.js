@@ -308,9 +308,7 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
-  // iOS Safari can scroll the visual viewport when the keyboard dismisses;
-  // force a reset so the header doesn't end up off-screen.
-  setTimeout(() => window.scrollTo(0, 0), 100);
+  // visualViewport listener resets the translateY when keyboard fully dismisses
 }
 
 logBtn.addEventListener('click', openModal);
@@ -389,6 +387,20 @@ form.addEventListener('submit', async e => {
     submitBtn.disabled = false;
   }
 });
+
+// ── iOS visual viewport compensation ──
+// When the keyboard appears, iOS shifts the visual viewport upward to reveal
+// the focused input, which pushes our header off the top of the screen.
+// Counter it by translating #app down by the same offset.
+if (window.visualViewport) {
+  const appEl = document.getElementById('app');
+  const onVP = () => {
+    const offset = window.visualViewport.offsetTop;
+    appEl.style.transform = offset ? `translateY(${offset}px)` : '';
+  };
+  window.visualViewport.addEventListener('resize', onVP);
+  window.visualViewport.addEventListener('scroll', onVP);
+}
 
 // ── Init ──
 loadShips();
