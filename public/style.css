@@ -483,9 +483,7 @@ body.admin-active .delete-btn { display: flex; }
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  /* overscroll-behavior prevents elastic bounce without blocking scrollTo(0,0),
-     which is needed to reset iOS's internal scroll after the keyboard dismisses. */
-  html, body { height: 100%; overscroll-behavior: none; }
+  html, body { overflow: hidden; height: 100%; }
   /* Sidebar slides in below the mobile controls bar so the logo isn't hidden behind it */
   #sidebar {
     position: fixed;
