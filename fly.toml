@@ -1,23 +1,25 @@
-# fly.toml app configuration file generated for duckmap on 2026-07-03T03:03:14Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = 'duckmap'
 primary_region = 'iad'
 
 [build]
 
+[env]
+  DATA_DIR = "/data"
+  PORT = "3000"
+
 [http_service]
-  internal_port = 8080
+  internal_port = 3000
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
 
+[[mounts]]
+  source = "duckmap_data"
+  destination = "/data"
+
 [[vm]]
-  memory = '1gb'
+  memory = '256mb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 256
