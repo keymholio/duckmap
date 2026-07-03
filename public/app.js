@@ -309,13 +309,10 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
-  // iOS doesn't reliably fire visualViewport events with offsetTop=0 when the keyboard
-  // dismisses against an overflow:hidden body. Force-reset the header after the
-  // keyboard animation finishes (~350ms) so it doesn't stay shifted over other content.
-  const headerEl = document.getElementById('mobile-controls');
+  // After the keyboard animates away, reset any internal iOS scroll and re-measure the map.
   setTimeout(() => {
-    headerEl.style.transform = '';
     window.scrollTo(0, 0);
+    map.invalidateSize();
   }, 400);
 }
 
@@ -404,22 +401,16 @@ form.addEventListener('submit', async e => {
 });
 
 // ── iOS visual viewport compensation ──
-// When the keyboard appears, iOS shifts the visual viewport upward to reveal
-// the focused input, which pushes our header off the top of the screen.
-// Fix: translate only the header (not #app) so position:fixed modal is unaffected,
-// and resize the modal to the visual viewport so inputs aren't hidden under the keyboard.
+// The sticky header handles its own positioning when iOS scrolls the page for
+// the keyboard. We only need to resize the modal so the form stays above the keyboard.
 if (window.visualViewport) {
-  const headerEl = document.getElementById('mobile-controls');
   const onVP = () => {
     const vp = window.visualViewport;
-    // If viewport height is back to full window height, keyboard is fully gone — hard reset.
-    const keyboardGone = vp.height >= window.innerHeight - 10;
-    const offset = keyboardGone ? 0 : vp.offsetTop;
-    headerEl.style.transform = offset ? `translateY(${offset}px)` : '';
     if (!modal.classList.contains('hidden')) {
-      modal.style.top = offset + 'px';
+      modal.style.top = vp.offsetTop + 'px';
       modal.style.height = vp.height + 'px';
     }
+    if (vp.height >= window.innerHeight - 10) map.invalidateSize();
   };
   window.visualViewport.addEventListener('resize', onVP);
   window.visualViewport.addEventListener('scroll', onVP);
