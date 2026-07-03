@@ -517,13 +517,11 @@ body.admin-active .delete-btn { display: flex; }
   /* Hide in-sidebar log button */
   #log-btn { display: none; }
 
-  /* Stack app as a column so the nav bar sits above the map in normal flow.
-     This avoids fixed-over-panning-surface, which causes iOS header drift. */
+  /* Stack app as a column; use height:100% (layout viewport) not position:fixed
+     so iOS keyboard dismissal doesn't offset the visual viewport and shift the header. */
   #app {
     flex-direction: column;
-    position: fixed;
-    inset: 0;
-    height: auto;
+    height: 100%;
   }
 
   #map {

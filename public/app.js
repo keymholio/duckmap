@@ -296,6 +296,8 @@ function openModal() {
 }
 
 function closeModal() {
+  // Blur first so iOS starts dismissing the keyboard before we hide the modal
+  if (document.activeElement) document.activeElement.blur();
   modal.classList.add('hidden');
   document.body.style.overflow = '';
   form.reset();
@@ -306,6 +308,9 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
+  // iOS Safari can scroll the visual viewport when the keyboard dismisses;
+  // force a reset so the header doesn't end up off-screen.
+  setTimeout(() => window.scrollTo(0, 0), 100);
 }
 
 logBtn.addEventListener('click', openModal);
