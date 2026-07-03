@@ -321,7 +321,6 @@ function closeModal() {
     if (!headerLocked) return;
     headerLocked = false;
     resetHeader();
-    window.scrollTo(0, 0);
     map.invalidateSize();
   }, 750);
 }
@@ -439,9 +438,8 @@ if (window.visualViewport) {
     } else {
       resetHeader();
       if (!keyboardOpen && headerLocked) {
-        // Keyboard confirmed gone while locked — safe to unlock and reset scroll.
+        // Keyboard confirmed gone while locked — safe to unlock.
         headerLocked = false;
-        window.scrollTo(0, 0);
         map.invalidateSize();
       }
     }
@@ -462,7 +460,6 @@ document.addEventListener('focusout', () => {
     const el = document.activeElement;
     if (!el || !['INPUT', 'SELECT', 'TEXTAREA'].includes(el.tagName)) {
       resetHeader();
-      window.scrollTo(0, 0);
     }
   }, 400);
 });
