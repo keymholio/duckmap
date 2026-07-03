@@ -108,6 +108,7 @@ function addDuck(duck, flyTo = false) {
 
   li.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) return;
+    document.body.classList.remove('sidebar-open');
     const m = markers.get(duck.id);
     if (m) clusterGroup.zoomToShowLayer(m, () => m.openPopup());
   });
@@ -221,6 +222,15 @@ function connectSSE() {
   });
   es.onerror = () => { es.close(); setTimeout(connectSSE, 5000); };
 }
+
+// ── Mobile drawer ──
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const fabLog = document.getElementById('fab-log');
+
+sidebarToggle.addEventListener('click', () => document.body.classList.toggle('sidebar-open'));
+sidebarOverlay.addEventListener('click', () => document.body.classList.remove('sidebar-open'));
+fabLog.addEventListener('click', () => modal.classList.remove('hidden'));
 
 // ── Photo preview ──
 const photoZone = document.getElementById('photo-zone');
