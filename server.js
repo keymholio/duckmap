@@ -13,6 +13,8 @@ const ADMIN_KEY = process.env.ADMIN_KEY || 'duckadmin';
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'ducks.json');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
+const SHIPS_FILE = path.join(DATA_DIR, 'ships.json');
+const DEFAULT_SHIPS_FILE = path.join(__dirname, 'config', 'ships.json');
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
@@ -74,12 +76,22 @@ app.get('/api/events', (req, res) => {
   req.on('close', () => { clearInterval(ping); sseClients.delete(res); });
 });
 
+app.get('/api/ships', (req, res) => {
+  try {
+    // Prefer volume copy so it can be updated without redeploying
+    const file = fs.existsSync(SHIPS_FILE) ? SHIPS_FILE : DEFAULT_SHIPS_FILE;
+    res.json(JSON.parse(fs.readFileSync(file, 'utf8')));
+  } catch {
+    res.json([]);
+  }
+});
+
 app.get('/api/ducks', (req, res) => {
   res.json(readDucks());
 });
 
 app.post('/api/ducks', upload.single('image'), (req, res) => {
-  const { city, finderName } = req.body;
+  const { city, finderName, ship } = req.body;
   const lat = parseFloat(req.body.lat);
   const lng = parseFloat(req.body.lng);
 
@@ -93,6 +105,7 @@ app.post('/api/ducks', upload.single('image'), (req, res) => {
     id: Date.now().toString(),
     city: city.trim(),
     finderName: (finderName || 'Anonymous').trim(),
+    ship: ship ? ship.trim() : null,
     lat,
     lng,
     image: req.file ? `/uploads/${req.file.filename}` : null,

@@ -85,7 +85,7 @@ function addDuck(duck, flyTo = false) {
         <img class="list-duck" src="${DUCK_URL}" alt="" />
         ${esc(duck.finderName)}
       </div>
-      <div class="duck-item-meta">📍 ${esc(duck.city)}</div>
+      <div class="duck-item-meta">📍 ${esc(duck.city)}${duck.ship ? ` · 🚢 ${esc(duck.ship)}` : ''}</div>
     </div>
     ${duck.image ? `<img class="card-thumb" src="${esc(duck.image)}" alt="duck photo" />` : ''}
     <button class="delete-btn" title="Delete duck" aria-label="Delete duck from ${esc(duck.city)}">×</button>
@@ -126,6 +126,7 @@ function addDuck(duck, flyTo = false) {
         : `<img src="${DUCK_URL}" alt="duck" />`}
       <strong>${esc(duck.finderName)}</strong>
       <div class="popup-city">📍 ${esc(duck.city)}</div>
+      ${duck.ship ? `<div class="popup-ship">🚢 ${esc(duck.ship)}</div>` : ''}
       <div class="popup-date">${new Date(duck.foundAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })}</div>
     </div>
   `, { maxWidth: 200 });
@@ -195,6 +196,28 @@ function exitAdminMode() {
 }
 
 adminLock.addEventListener('click', exitAdminMode);
+
+// ── Populate ship select ──
+async function loadShips() {
+  try {
+    const res = await fetch('/api/ships');
+    const lines = await res.json();
+    const sel = document.getElementById('ship-select');
+    lines.forEach(({ line, ships }) => {
+      const group = document.createElement('optgroup');
+      group.label = line;
+      ships.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        group.appendChild(opt);
+      });
+      sel.appendChild(group);
+    });
+  } catch (e) {
+    console.error('Could not load ships', e);
+  }
+}
 
 // ── Initial load ──
 async function fetchDucks() {
@@ -329,8 +352,10 @@ form.addEventListener('submit', async e => {
   }
 
   try {
+    const ship = document.getElementById('ship-select').value;
     const formData = new FormData();
     formData.append('finderName', finderName);
+    if (ship) formData.append('ship', ship);
     formData.append('city', geo.display || cityRaw);
     formData.append('lat', geo.lat);
     formData.append('lng', geo.lng);
@@ -361,4 +386,5 @@ form.addEventListener('submit', async e => {
 });
 
 // ── Init ──
+loadShips();
 fetchDucks().then(() => connectSSE());

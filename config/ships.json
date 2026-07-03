@@ -1,0 +1,102 @@
+[
+  {
+    "line": "Royal Caribbean",
+    "ships": [
+      "Icon of the Seas", "Star of the Seas", "Utopia of the Seas",
+      "Wonder of the Seas", "Symphony of the Seas", "Harmony of the Seas",
+      "Oasis of the Seas", "Allure of the Seas", "Anthem of the Seas",
+      "Ovation of the Seas", "Odyssey of the Seas", "Quantum of the Seas",
+      "Freedom of the Seas", "Liberty of the Seas", "Independence of the Seas",
+      "Adventure of the Seas", "Navigator of the Seas", "Mariner of the Seas",
+      "Explorer of the Seas", "Voyager of the Seas", "Brilliance of the Seas",
+      "Serenade of the Seas", "Jewel of the Seas", "Enchantment of the Seas",
+      "Vision of the Seas", "Spectrum of the Seas"
+    ]
+  },
+  {
+    "line": "Carnival",
+    "ships": [
+      "Carnival Jubilee", "Carnival Celebration", "Carnival Mardi Gras",
+      "Carnival Venezia", "Carnival Vista", "Carnival Horizon",
+      "Carnival Panorama", "Carnival Magic", "Carnival Dream",
+      "Carnival Breeze", "Carnival Sunshine", "Carnival Paradise",
+      "Carnival Valor", "Carnival Liberty", "Carnival Freedom",
+      "Carnival Conquest", "Carnival Glory", "Carnival Legend",
+      "Carnival Pride", "Carnival Miracle", "Carnival Spirit",
+      "Carnival Elation", "Carnival Radiance"
+    ]
+  },
+  {
+    "line": "Norwegian",
+    "ships": [
+      "Norwegian Aqua", "Norwegian Viva", "Norwegian Prima",
+      "Norwegian Encore", "Norwegian Bliss", "Norwegian Escape",
+      "Norwegian Getaway", "Norwegian Breakaway", "Norwegian Epic",
+      "Norwegian Joy", "Norwegian Pearl", "Norwegian Jade",
+      "Norwegian Gem", "Norwegian Jewel", "Norwegian Dawn",
+      "Norwegian Star", "Norwegian Sun", "Norwegian Spirit",
+      "Norwegian Sky", "Pride of America"
+    ]
+  },
+  {
+    "line": "Disney",
+    "ships": [
+      "Disney Treasure", "Disney Wish", "Disney Fantasy",
+      "Disney Dream", "Disney Magic", "Disney Wonder"
+    ]
+  },
+  {
+    "line": "Celebrity",
+    "ships": [
+      "Celebrity Xcel", "Celebrity Ascent", "Celebrity Beyond",
+      "Celebrity Apex", "Celebrity Edge", "Celebrity Reflection",
+      "Celebrity Silhouette", "Celebrity Equinox", "Celebrity Summit",
+      "Celebrity Millennium", "Celebrity Infinity", "Celebrity Constellation",
+      "Celebrity Eclipse", "Celebrity Solstice"
+    ]
+  },
+  {
+    "line": "Princess",
+    "ships": [
+      "Sun Princess", "Star Princess", "Sphere Princess",
+      "Sky Princess", "Enchanted Princess", "Discovery Princess",
+      "Royal Princess", "Regal Princess", "Majestic Princess",
+      "Crown Princess", "Ruby Princess", "Emerald Princess",
+      "Sapphire Princess", "Diamond Princess", "Grand Princess",
+      "Coral Princess", "Island Princess", "Pacific Princess"
+    ]
+  },
+  {
+    "line": "MSC",
+    "ships": [
+      "MSC World America", "MSC World Europa", "MSC Seascape",
+      "MSC Seashore", "MSC Virtuosa", "MSC Grandiosa",
+      "MSC Bellissima", "MSC Meraviglia", "MSC Magnifica",
+      "MSC Splendida", "MSC Fantasia", "MSC Divina",
+      "MSC Preziosa", "MSC Orchestra", "MSC Musica",
+      "MSC Opera", "MSC Lirica", "MSC Armonia"
+    ]
+  },
+  {
+    "line": "Holland America",
+    "ships": [
+      "Rotterdam", "Nieuw Statendam", "Koningsdam",
+      "Nieuw Amsterdam", "Eurodam", "Zuiderdam",
+      "Oosterdam", "Westerdam", "Noordam",
+      "Volendam", "Zaandam"
+    ]
+  },
+  {
+    "line": "Virgin Voyages",
+    "ships": [
+      "Scarlet Lady", "Valiant Lady", "Resilient Lady", "Brilliant Lady"
+    ]
+  },
+  {
+    "line": "Oceania",
+    "ships": [
+      "Allura", "Vista", "Riviera", "Marina",
+      "Nautica", "Regatta", "Insignia", "Sirena"
+    ]
+  }
+]
