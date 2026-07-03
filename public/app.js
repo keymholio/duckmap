@@ -38,6 +38,7 @@ map.addLayer(clusterGroup);
 let ducks = [];
 let adminKey = null;
 const markers = new Map();
+let headerLocked = false; // prevents onVP re-applying transform during modal close animation
 
 // ── DOM refs ──
 const modal = document.getElementById('modal-overlay');
@@ -310,14 +311,19 @@ function closeModal() {
   geocodeStatus.textContent = '';
   geocodeStatus.className = '';
   submitBtn.disabled = false;
-  // Clear header immediately — onVP fires during the keyboard-close animation and would
-  // otherwise re-apply the transform after this function exits.
+  // Lock header so onVP can't re-apply the transform while the keyboard is animating out.
+  // onVP releases the lock event-driven when it confirms the keyboard is gone.
+  // This timeout is a fallback only — guard with headerLocked so it doesn't
+  // fire a second time if onVP already unlocked cleanly.
+  headerLocked = true;
   resetHeader();
   setTimeout(() => {
+    if (!headerLocked) return;
+    headerLocked = false;
     resetHeader();
     window.scrollTo(0, 0);
     map.invalidateSize();
-  }, 500);
+  }, 750);
 }
 
 logBtn.addEventListener('click', openModal);
@@ -415,30 +421,51 @@ function resetHeader() {
 // ── iOS visual viewport compensation ──
 // When the keyboard appears iOS shifts the visual viewport upward (offsetTop > 0),
 // pushing the header off-screen. Translate the header back down by that offset.
-// Key rule: once the modal is hidden, ALWAYS reset — this prevents the keyboard-
-// close animation from re-applying the transform after closeModal() already cleared it.
+// This applies for ANY focused input — modal form, admin password, anywhere.
+//
+// headerLocked is set by closeModal() to block onVP from re-applying the transform
+// while the keyboard animates out. The lock is released event-driven (when onVP
+// confirms the keyboard is fully gone) so a late visualViewport event after the
+// fixed-timeout fallback can't re-apply a stale offset.
 if (window.visualViewport) {
   const onVP = () => {
     const vp = window.visualViewport;
-    const modalOpen = !modal.classList.contains('hidden');
-    if (modalOpen) {
-      const offset = vp.height < window.innerHeight - 50 ? Math.round(vp.offsetTop) : 0;
-      if (offset > 0) {
-        headerEl.style.transform = `translateY(${offset}px)`;
-        headerEl.style.zIndex = '1001';
-      } else {
-        resetHeader();
-      }
-      modal.style.top = vp.offsetTop + 'px';
-      modal.style.height = vp.height + 'px';
+    const keyboardOpen = vp.height < window.innerHeight - 50;
+    const offset = keyboardOpen ? Math.round(vp.offsetTop) : 0;
+
+    if (!headerLocked && offset > 0) {
+      headerEl.style.transform = `translateY(${offset}px)`;
+      headerEl.style.zIndex = '1001';
     } else {
       resetHeader();
-      if (vp.height >= window.innerHeight - 10) map.invalidateSize();
+      if (!keyboardOpen && headerLocked) {
+        // Keyboard confirmed gone while locked — safe to unlock and reset scroll.
+        headerLocked = false;
+        window.scrollTo(0, 0);
+        map.invalidateSize();
+      }
+    }
+
+    if (!modal.classList.contains('hidden')) {
+      modal.style.top = vp.offsetTop + 'px';
+      modal.style.height = vp.height + 'px';
     }
   };
   window.visualViewport.addEventListener('resize', onVP);
   window.visualViewport.addEventListener('scroll', onVP);
 }
+
+// Safety net for non-modal inputs (admin password, etc.): reset the header
+// 400 ms after focus leaves any input, if no other input is now focused.
+document.addEventListener('focusout', () => {
+  setTimeout(() => {
+    const el = document.activeElement;
+    if (!el || !['INPUT', 'SELECT', 'TEXTAREA'].includes(el.tagName)) {
+      resetHeader();
+      window.scrollTo(0, 0);
+    }
+  }, 400);
+});
 
 // ── Init ──
 loadShips();
