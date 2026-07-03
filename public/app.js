@@ -430,7 +430,10 @@ if (window.visualViewport) {
   const onVP = () => {
     const vp = window.visualViewport;
     const keyboardOpen = vp.height < window.innerHeight - 50;
-    const offset = keyboardOpen ? Math.round(vp.offsetTop) : 0;
+    // Always use the real offsetTop — don't clamp to 0 when keyboard appears gone,
+    // because iOS often resets offsetTop gradually and a premature snap causes the
+    // header to land behind the status bar during quick open-and-dismiss.
+    const offset = Math.round(vp.offsetTop);
 
     if (!headerLocked && offset > 0) {
       headerEl.style.transform = `translateY(${offset}px)`;
@@ -438,7 +441,6 @@ if (window.visualViewport) {
     } else {
       resetHeader();
       if (!keyboardOpen && headerLocked) {
-        // Keyboard confirmed gone while locked — safe to unlock.
         headerLocked = false;
         map.invalidateSize();
       }
@@ -453,15 +455,24 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener('scroll', onVP);
 }
 
-// Safety net for non-modal inputs (admin password, etc.): reset the header
-// 400 ms after focus leaves any input, if no other input is now focused.
+// On blur of any text field, re-sync the header with the actual viewport state
+// after the keyboard finishes animating out. This catches quick open-and-dismiss
+// where onVP may fire before iOS has fully reset offsetTop.
 document.addEventListener('focusout', () => {
   setTimeout(() => {
     const el = document.activeElement;
-    if (!el || !['INPUT', 'SELECT', 'TEXTAREA'].includes(el.tagName)) {
+    if (el && ['INPUT', 'SELECT', 'TEXTAREA'].includes(el.tagName)) return;
+    if (headerLocked) return; // closeModal handles its own cleanup
+    if (!window.visualViewport) { resetHeader(); return; }
+    const vp = window.visualViewport;
+    const offset = Math.round(vp.offsetTop);
+    if (offset > 0) {
+      headerEl.style.transform = `translateY(${offset}px)`;
+      headerEl.style.zIndex = '1001';
+    } else {
       resetHeader();
     }
-  }, 400);
+  }, 350);
 });
 
 // ── Init ──
