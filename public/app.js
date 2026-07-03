@@ -83,18 +83,18 @@ function addDuck(duck, flyTo = false) {
     <div class="duck-item-body">
       <div class="duck-item-name">
         <img class="list-duck" src="${DUCK_URL}" alt="" />
-        ${esc(duck.name)}
+        ${esc(duck.finderName)}
       </div>
-      <div class="duck-item-meta">📍 ${esc(duck.city)} · Found by ${esc(duck.finderName)}</div>
+      <div class="duck-item-meta">📍 ${esc(duck.city)}</div>
     </div>
     ${duck.image ? `<img class="card-thumb" src="${esc(duck.image)}" alt="duck photo" />` : ''}
-    <button class="delete-btn" title="Delete duck" aria-label="Delete ${esc(duck.name)}">×</button>
+    <button class="delete-btn" title="Delete duck" aria-label="Delete duck from ${esc(duck.city)}">×</button>
   `;
 
   li.querySelector('.delete-btn').addEventListener('click', async (e) => {
     e.stopPropagation();
     if (!adminKey) return;
-    if (!confirm(`Delete "${duck.name}"?`)) return;
+    if (!confirm(`Delete duck from ${duck.city} (found by ${duck.finderName})?`)) return;
     try {
       const res = await fetch(`${API}/${duck.id}`, {
         method: 'DELETE',
@@ -124,9 +124,8 @@ function addDuck(duck, flyTo = false) {
       ${duck.image
         ? `<img class="popup-user-photo" src="${esc(duck.image)}" alt="duck photo" />`
         : `<img src="${DUCK_URL}" alt="duck" />`}
-      <strong>${esc(duck.name)}</strong>
+      <strong>${esc(duck.finderName)}</strong>
       <div class="popup-city">📍 ${esc(duck.city)}</div>
-      <div class="popup-finder">Found by ${esc(duck.finderName)}</div>
       <div class="popup-date">${new Date(duck.foundAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })}</div>
     </div>
   `, { maxWidth: 200 });
@@ -315,7 +314,6 @@ form.addEventListener('submit', async e => {
   e.preventDefault();
   submitBtn.disabled = true;
 
-  const duckName = document.getElementById('duck-name').value.trim();
   const finderName = document.getElementById('finder-name').value.trim() || 'Anonymous';
   const cityRaw = document.getElementById('city-name').value.trim();
 
@@ -332,7 +330,6 @@ form.addEventListener('submit', async e => {
 
   try {
     const formData = new FormData();
-    formData.append('name', duckName);
     formData.append('finderName', finderName);
     formData.append('city', geo.display || cityRaw);
     formData.append('lat', geo.lat);

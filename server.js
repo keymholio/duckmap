@@ -79,11 +79,11 @@ app.get('/api/ducks', (req, res) => {
 });
 
 app.post('/api/ducks', upload.single('image'), (req, res) => {
-  const { name, city, finderName } = req.body;
+  const { city, finderName } = req.body;
   const lat = parseFloat(req.body.lat);
   const lng = parseFloat(req.body.lng);
 
-  if (!name || !city || isNaN(lat) || isNaN(lng)) {
+  if (!city || isNaN(lat) || isNaN(lng)) {
     if (req.file) fs.unlink(req.file.path, () => {});
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -91,7 +91,6 @@ app.post('/api/ducks', upload.single('image'), (req, res) => {
   const ducks = readDucks();
   const duck = {
     id: Date.now().toString(),
-    name: name.trim(),
     city: city.trim(),
     finderName: (finderName || 'Anonymous').trim(),
     lat,
