@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DuckMap — Cruise Duck Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div id="sidebar-header">
+        <img class="duck-logo" src="https://static.vecteezy.com/system/resources/previews/046/497/888/original/plastic-rubber-duck-isolated-on-transparent-background-free-png.png" alt="duck" />
+        <div>
+          <h1>DuckMap</h1>
+          <p class="tagline">Cruise duck tracker</p>
+        </div>
+      </div>
+
+      <button id="log-btn" class="btn-primary">+ Log a Duck</button>
+
+      <div id="empty-state" class="hidden">
+        <img src="https://static.vecteezy.com/system/resources/previews/046/497/888/original/plastic-rubber-duck-isolated-on-transparent-background-free-png.png" alt="duck" />
+        <p class="empty-headline">No ducks yet!</p>
+        <p class="empty-sub">Found a rubber duck on the ship? Be the first to put it on the map!</p>
+      </div>
+
+      <ul id="duck-list"></ul>
+
+      <div id="admin-section">
+        <button id="admin-toggle" class="btn-admin">🔐 Admin</button>
+        <div id="admin-form" class="hidden">
+          <input id="admin-key-input" type="password" placeholder="Password" autocomplete="current-password" />
+          <button id="admin-submit">Unlock</button>
+          <div id="admin-status"></div>
+        </div>
+        <div id="admin-active-bar" class="hidden">
+          <span>Admin mode active</span>
+          <button id="admin-lock">Lock</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="hidden">
+      <div id="modal">
+        <button id="modal-close" aria-label="Close">&times;</button>
+        <h2 class="modal-title">
+          <img class="modal-duck" src="https://static.vecteezy.com/system/resources/previews/046/497/888/original/plastic-rubber-duck-isolated-on-transparent-background-free-png.png" alt="" />
+          Log a Duck!
+        </h2>
+        <p class="modal-sub">Found a rubber duck on the cruise? Tell everyone!</p>
+
+        <form id="duck-form">
+          <label for="duck-name">Duck's Name</label>
+          <input id="duck-name" type="text" placeholder="e.g. Captain Quackers" maxlength="50" required />
+
+          <label for="finder-name">Your Name</label>
+          <input id="finder-name" type="text" placeholder="e.g. Jane S." maxlength="50" />
+
+          <label for="city-name">Your City / Port</label>
+          <input id="city-name" type="text" placeholder="e.g. Miami, FL" maxlength="100" required />
+
+          <div id="geocode-status"></div>
+
+          <label>Photo <span class="optional">(optional)</span></label>
+          <div class="photo-zone" id="photo-zone">
+            <input id="duck-image" type="file" accept="image/*" capture="environment" />
+            <div class="photo-prompt" id="photo-prompt">
+              📷 <span>Add a photo of the duck</span>
+            </div>
+            <div class="photo-preview-wrap hidden" id="photo-preview-wrap">
+              <img id="photo-preview" alt="preview" />
+              <button type="button" id="clear-photo" aria-label="Remove photo">×</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">
+            Set Sail!
+            <img class="btn-duck" src="https://static.vecteezy.com/system/resources/previews/046/497/888/original/plastic-rubber-duck-isolated-on-transparent-background-free-png.png" alt="" />
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
