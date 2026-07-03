@@ -531,6 +531,7 @@ body.admin-active .delete-btn { display: flex; }
     font-weight: 800;
     cursor: pointer;
     white-space: nowrap;
+    margin-right: 8px;
   }
 
   /* Push zoom controls below the nav bar */

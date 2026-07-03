@@ -341,8 +341,15 @@ form.addEventListener('submit', async e => {
     const res = await fetch(API, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Server error');
     const duck = await res.json();
-    if (!markers.has(duck.id)) { ducks.push(duck); addDuck(duck, true); }
     closeModal();
+    if (!markers.has(duck.id)) {
+      ducks.push(duck);
+      addDuck(duck, false);
+      setTimeout(() => {
+        const m = markers.get(duck.id);
+        if (m) clusterGroup.zoomToShowLayer(m, () => m.openPopup());
+      }, 350);
+    }
   } catch (err) {
     geocodeStatus.textContent = 'Something went wrong. Please try again.';
     geocodeStatus.className = 'error';
