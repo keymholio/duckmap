@@ -11,10 +11,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const duckIcon = L.divIcon({
   className: '',
-  html: `<img src="${DUCK_URL}" alt="duck" style="width:44px;height:auto;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4));" />`,
-  iconSize: [44, 50],
-  iconAnchor: [22, 50],
-  popupAnchor: [0, -52]
+  html: `<img src="${DUCK_URL}" alt="duck" style="width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4));" />`,
+  iconSize: [44, 44],
+  iconAnchor: [22, 44],
+  popupAnchor: [0, -46]
 });
 
 const clusterGroup = L.markerClusterGroup({

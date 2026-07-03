@@ -449,7 +449,7 @@ body.admin-active .delete-btn { display: flex; }
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  /* Keep flex layout — sidebar goes fixed/out-of-flow so map fills full width */
+  /* Sidebar becomes a fixed slide-out drawer, out of flex flow so map fills full width */
   #sidebar {
     position: fixed;
     top: 0;
@@ -463,10 +463,9 @@ body.admin-active .delete-btn { display: flex; }
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
   }
-
   body.sidebar-open #sidebar { transform: translateX(0); }
 
-  /* Dim overlay behind the drawer */
+  /* Dim overlay behind the open drawer */
   #sidebar-overlay {
     display: block;
     position: fixed;
@@ -480,73 +479,63 @@ body.admin-active .delete-btn { display: flex; }
   }
   body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: all; }
 
-  /* Hide the in-sidebar log button — replaced by FAB */
+  /* Hide in-sidebar log button */
   #log-btn { display: none; }
 
-  /* Floating controls */
+  /* Solid edge-to-edge top nav bar */
   #mobile-controls {
     display: flex;
     position: fixed;
-    top: 16px;
-    left: 16px;
-    right: 16px;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 200;
-    pointer-events: none;
-  }
-
-  #mobile-logo {
-    pointer-events: all;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
     background: var(--navy);
-    border-radius: 10px;
-    padding: 8px 12px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.35);
-  }
-  #mobile-logo img { width: 26px; height: auto; }
-  #mobile-logo span { color: var(--duck-yellow); font-weight: 800; font-size: 0.95rem; }
-
-  #mobile-actions {
-    pointer-events: all;
-    display: flex;
-    gap: 8px;
     align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 200;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
   }
+
+  #mobile-title {
+    color: var(--duck-yellow);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.3px;
+  }
+
+  #mobile-actions { display: flex; gap: 8px; align-items: center; }
 
   #sidebar-toggle {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--navy);
+    background: rgba(255,255,255,0.1);
     color: var(--white);
     border: none;
-    border-radius: 10px;
-    padding: 10px 13px;
-    font-size: 0.82rem;
+    border-radius: 7px;
+    padding: 7px 11px;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.35);
   }
 
   #fab-log {
     background: var(--duck-yellow);
     color: var(--navy);
     border: none;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 0.82rem;
+    border-radius: 7px;
+    padding: 7px 12px;
+    font-size: 0.8rem;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
     white-space: nowrap;
   }
 
-  /* Push Leaflet zoom controls below the mobile header bar */
-  .leaflet-top.leaflet-left { top: 72px; }
+  /* Push zoom controls below the nav bar */
+  .leaflet-top.leaflet-left { top: 66px; }
 
-  /* Modal above everything on mobile */
+  /* Modal above everything */
   #modal-overlay { z-index: 400; }
 }
