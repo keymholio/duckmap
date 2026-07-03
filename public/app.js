@@ -2,7 +2,8 @@ const API = '/api/ducks';
 const DUCK_URL = 'https://static.vecteezy.com/system/resources/previews/046/497/888/original/plastic-rubber-duck-isolated-on-transparent-background-free-png.png';
 
 // ── Map setup ──
-const map = L.map('map', { zoomControl: true }).setView([20, 0], 2);
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+const map = L.map('map', { zoomControl: true }).setView([39.5, -98.35], isMobile ? 3 : 4);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -13,8 +14,8 @@ const duckIcon = L.divIcon({
   className: '',
   html: `<img src="${DUCK_URL}" alt="duck" style="width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4));" />`,
   iconSize: [44, 44],
-  iconAnchor: [22, 44],
-  popupAnchor: [0, -46]
+  iconAnchor: [22, 36],
+  popupAnchor: [0, -38]
 });
 
 const clusterGroup = L.markerClusterGroup({
@@ -230,7 +231,6 @@ const fabLog = document.getElementById('fab-log');
 
 sidebarToggle.addEventListener('click', () => document.body.classList.toggle('sidebar-open'));
 sidebarOverlay.addEventListener('click', () => document.body.classList.remove('sidebar-open'));
-fabLog.addEventListener('click', () => modal.classList.remove('hidden'));
 
 // ── Photo preview ──
 const photoZone = document.getElementById('photo-zone');
@@ -265,13 +265,15 @@ clearPhoto.addEventListener('click', e => {
 });
 
 // ── Log duck modal ──
-logBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-document.getElementById('modal-close').addEventListener('click', closeModal);
-modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function openModal() {
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
 
 function closeModal() {
   modal.classList.add('hidden');
+  document.body.style.overflow = '';
+  window.scrollTo(0, 0);
   form.reset();
   photoInput.value = '';
   photoPreview.src = '';
@@ -281,6 +283,12 @@ function closeModal() {
   geocodeStatus.className = '';
   submitBtn.disabled = false;
 }
+
+logBtn.addEventListener('click', openModal);
+fabLog.addEventListener('click', openModal);
+document.getElementById('modal-close').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 let geocodeTimer;
 document.getElementById('city-name').addEventListener('input', e => {
